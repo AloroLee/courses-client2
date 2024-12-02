@@ -1,0 +1,16 @@
+<body>
+    <h1>Course</h1>
+    <select name="list" id="list"></select>
+    <script>
+document.addEventListener("DOMContentLoaded", async ()=>{
+
+    const req = await fetch ("http://127.0.0.1:8081/api/courses/", {
+        method: "GET"
+    }); //get json text
+
+    const data = await req.json(); //parse
+
+    data.forEach(o => list.appendChild(new Option(o.courseName, o.id)));
+});
+    </script>
+</body>
