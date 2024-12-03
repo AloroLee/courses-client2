@@ -47,7 +47,7 @@
             }else{
                 // New save POST CREATE
                 const req = await fetch("http://localhost:8081/api/courses", {
-                method: "PUT",
+                method: "POST",
                 body: JSON.stringify(bodyData),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
