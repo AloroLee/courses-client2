@@ -1,17 +1,67 @@
 <body>
     <h1>Courses</h1>
-    <form action="">
-    <select name="list" id="list"></select>
-    <div id="courseTarget">?</div>
-    <button id="saveBtn">Save</button>
-    <button id="deleteBtn">Delete</button>
-    <button id="newBtn">Clear Form</button>
-</form>
+        <select name="list" id="list"></select>
+        <div id="courseTarget">?</div>
+        <button id="saveBtn">Save</button>
+        <button id="deleteBtn">Delete</button>
+        <button id="newBtn">Clear Form</button>
     <script>
         function render(data) {
             data.forEach(o => list.appendChild(new Option(o.courseName + " - #" + o.id, o.id)));
         }
+
+        function blank(){
+            courseTarget.innerHTML = `
+                <label>Course ID: <br> <input value="" id="courseId" readonly="readonly"></label><br>
+                <label>Course Name: <br> <input value="" id="courseName"></label><br>
+                <label>Course Deparment: <br> <input value="" id="courseDept"></label><br>
+                <label>Course Number: <br> <input type="number" value="" id="courseNum"></label><br>
+                <label>Course Instructor: <br> <input value="" id="instructor"></label><br>
+                <label>Course Start Date: <br> <input type="date" value="" id="startDate"></label><br>
+                <label>Course Number of Days: <br> <input type="number" value="" id="numDays"></label><br>
+                `;
+        };
+
+        async function save(){
+            const bodyData = {
+                    // "courseId": courseId.value,
+                    "courseName": courseName.value,
+                    "dept": courseDept.value,
+                    "courseNum": courseNum.value,
+                    "instructor": instructor.value,
+                    "startDate": startDate.value,
+                    "numDays": numDays.value
+                };
+            if(courseId.value){
+                // Regular save PUT UPDATE
+              
+                const req = await fetch("http://localhost:8081/api/courses" + courseId.value, {
+                method: "PUT",
+                body: JSON.stringify(bodyData),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+
+                }
+            }); // get json text
+            blank();
+            }else{
+                // New save POST CREATE
+                const req = await fetch("http://localhost:8081/api/courses", {
+                method: "PUT",
+                body: JSON.stringify(bodyData),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+
+                }
+            }); // get json text
+
+            const data = await req.json();
+            courseId.value = data.id;
+            }
+        }
         document.addEventListener("DOMContentLoaded", async () => {
+            newBtn.addEventListener("click", blank)
+            saveBtn.addEventListener("click", save)
             list.addEventListener("change", () => {
                 const courseId = list.value;
                 const course = data.find(o => o.id == courseId);
@@ -46,6 +96,7 @@
             const data = await req.json(); // parse
             // Same as end of line 13
             render(data);
+            blank();
 
             window.data = data; // Make global var
             // Or
